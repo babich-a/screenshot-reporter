@@ -9,7 +9,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}\\lib\\index"
+            "program": "${workspaceRoot}\\test\\test.js"
         }
     ]
 }

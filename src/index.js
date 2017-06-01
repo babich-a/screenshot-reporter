@@ -46,28 +46,45 @@ export default function () {
             this.write(footer)
                 .newline();
 
+            var templateStr = fs.readFileSync(path.join(__dirname, '../src/index.html')).toString();
             var imagePath = 'img/';
-            var ethalonPath = path.join(imagePath, 'ethalon/');
-            var currentPath = path.join(imagePath, 'current/');
             var result = [];
 
-            var templateStr = fs.readFileSync(path.join(__dirname, '../src/index.html')).toString();
 
-            
-            if (fs.existsSync(currentPath)) {
-                fs.readdirSync(currentPath)
-                .filter(file =>{
-                    return fs.lstatSync(path.join(currentPath, file)).isFile();
-                })
-                .forEach(file => {
-                    var currentFile = path.join(currentPath, file);
-                    var ethalonFile = path.join(ethalonPath, file);
+            if (fs.existsSync(imagePath)) {
+                fs.readdirSync(imagePath)
+                    .filter(fixtureDir =>{
+                        return fs.lstatSync(path.join(imagePath, fixtureDir)).isDirectory();
+                    })
+                    .forEach(fixture => {
+                        fs.readdirSync(path.join(imagePath, fixture))
+                            .filter(testDir =>{
+                                return fs.lstatSync(path.join(imagePath, fixture, testDir)).isDirectory();
+                            })
+                            .forEach(test => {
+                                var testDirectory = path.join(imagePath, fixture, test);
+                                var ethalonPath = path.join(testDirectory, 'ethalon/');
+                                var currentPath = path.join(testDirectory, 'current/');
 
-                    result.push({ 
-                        current: currentFile,
-                        ethalon: ethalonFile
+                                var currentFolders = fs.readdirSync(currentPath);
+                                var lastTestFolder = path.join(currentPath, currentFolders[currentFolders.length - 1]);//last dir in current
+
+                                fs.readdirSync(lastTestFolder)
+                                    .forEach(screenShotName => {
+                                        var img = path.join(lastTestFolder, screenShotName, 'chrome.png');
+                                        var diff = path.join(lastTestFolder, screenShotName, 'chrome_diff.png');
+                                        var ethImg = path.join(ethalonPath, screenShotName, 'chrome.png');
+
+                                        var forCase = {
+                                            current: img,
+                                            diff:    diff,
+                                            ethalon: ethImg
+                                        };
+
+                                        result.push(forCase);
+                                    });
+                            });
                     });
-                });
             }
 
             fs.writeFileSync('report.html', mustache.render(templateStr, { items: result }));

@@ -1,4 +1,75 @@
-{{#items}}
-<img src="{{current}}">
-<img src="{{ethalon}}">
-{{/items}}
+<html>
+    <head>
+        <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.1.0.min.js"></script>
+        <style>
+            .comparing-item {
+                position: relative;
+                border: 1px solid lightgray;
+                padding: 10px;
+                margin: 10px;
+            }
+            .comparing-item .image {
+                position: relative;
+                border: 1px solid gray;
+                display: block;
+            }
+            .tabs {
+                height: 50px;
+            }
+            .tabs .tab {
+                background: #eeeeee;
+                padding: 10px 20px;
+                float: left;
+                cursor: active;
+            }
+            .tabs .tab.active {
+                background: lightgray;
+            }
+        </style>
+    </head>
+    <body>
+        
+        {{#items}}
+        <div class="comparing-item">
+            <div class="tabs">
+                <div class="tab change-current active">current</div>
+                <div class="tab change-ethalon">ethalon</div>
+                <div class="tab change-diff">diff</div>
+            </div>
+            
+
+            <div class="display">{{current}}</div>
+            <img class="image" src="{{current}}" data-current="{{current}}" data-ethalon="{{ethalon}}" data-diff="{{diff}}">
+        </div>
+        {{/items}}
+        <script>
+            $(function(){
+
+                function setImage(state) {
+                    var image = $(".image");
+                    var display = $(".display");
+                    display.text(image.data(state));
+                    image.attr("src", image.data(state));
+                }
+
+                function setCurrent(element){
+                    $(element).siblings().removeClass("active");
+                    $(element).addClass("active");
+                }
+
+                $(".change-current").click(function(){
+                    setCurrent(this);
+                    setImage("current");
+                });
+                $(".change-ethalon").click(function(){
+                    setCurrent(this);
+                    setImage("ethalon");
+                });
+                $(".change-diff").click(function(){
+                    setCurrent(this);
+                    setImage("diff");
+                });
+            });
+        </script>
+    </body>
+</html>
