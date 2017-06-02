@@ -49,17 +49,18 @@ export default function () {
             var templateStr = fs.readFileSync(path.join(__dirname, '../src/index.html')).toString();
             var imagePath = 'img/';
             var result = [];
-
+            var fixtureName = '';
 
             if (fs.existsSync(imagePath)) {
                 fs.readdirSync(imagePath)
                     .filter(fixtureDir =>{
-                        return fs.lstatSync(path.join(imagePath, fixtureDir)).isDirectory();
+                        return fs.lstatSync(path.join(imagePath, fixtureDir)).isDirectory() && fixtureDir !== 'thumbnails';
                     })
                     .forEach(fixture => {
+                        fixtureName = fixture;
                         fs.readdirSync(path.join(imagePath, fixture))
                             .filter(testDir =>{
-                                return fs.lstatSync(path.join(imagePath, fixture, testDir)).isDirectory();
+                                return fs.lstatSync(path.join(imagePath, fixture, testDir)).isDirectory() && testDir !== 'thumbnails';
                             })
                             .forEach(test => {
                                 var testDirectory = path.join(imagePath, fixture, test);
@@ -87,7 +88,7 @@ export default function () {
                     });
             }
 
-            fs.writeFileSync('report.html', mustache.render(templateStr, { items: result }));
+            fs.writeFileSync('report.html', mustache.render(templateStr, { fixture: fixtureName, items: result }));
         }
     };
 }

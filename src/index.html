@@ -6,48 +6,71 @@
                 position: relative;
                 border: 1px solid lightgray;
                 padding: 10px;
-                margin: 10px;
+                margin-top: 10px;
             }
             .comparing-item .image {
                 position: relative;
-                border: 1px solid gray;
                 display: block;
             }
             .tabs {
-                height: 50px;
+                
+            }
+            .tabs::after {
+                display: table;
+                content: "";
+                clear: both;
+                height: 1px;
+                background: gray;
+                width: 100%;
+                top: -1px;
+                position: relative;
+                z-index: -1;
             }
             .tabs .tab {
                 background: #eeeeee;
+                border: 1px solid  lightgray;
+                border-bottom: 1px solid  gray;
                 padding: 10px 20px;
                 float: left;
-                cursor: active;
+                cursor: pointer;
+            }
+            .tabs .button {
+                background: #eeeeee;
+                border: 1px solid lightgray;
+                padding: 5px 15px;
+                float: right;
+                margin-left: 5px;
             }
             .tabs .tab.active {
                 background: lightgray;
+                border: 1px solid  gray;
+                border-bottom: 1px solid  #eeeeee;
             }
         </style>
     </head>
     <body>
-        
+        <h1>{{fixture}}</h1>
         {{#items}}
         <div class="comparing-item">
             <div class="tabs">
                 <div class="tab change-current active">current</div>
                 <div class="tab change-ethalon">ethalon</div>
                 <div class="tab change-diff">diff</div>
-            </div>
-            
 
-            <div class="display">{{current}}</div>
+                <div class="button ethalon" data-current="{{current}}" data-ethalon="{{ethalon}}">make ethalon</div>
+                <div class="button mask" data-current="{{current}}" data-ethalon="{{ethalon}}">create mask</div>
+            </div>
+
             <img class="image" src="{{current}}" data-current="{{current}}" data-ethalon="{{ethalon}}" data-diff="{{diff}}">
+            <div class="display">{{current}}</div>
         </div>
         {{/items}}
         <script>
             $(function(){
 
-                function setImage(state) {
-                    var image = $(".image");
-                    var display = $(".display");
+                function setImage(trigger, state) {
+                    var image = $(trigger).parents(".comparing-item").find(".image");
+                    var display = $(trigger).parents(".comparing-item").find(".display");
                     display.text(image.data(state));
                     image.attr("src", image.data(state));
                 }
@@ -57,18 +80,29 @@
                     $(element).addClass("active");
                 }
 
-                $(".change-current").click(function(){
-                    setCurrent(this);
-                    setImage("current");
+                $.each([ "current", "ethalon", "diff" ], function(_, tabName){
+                     $(".change-" + tabName).click(function(){
+                        setCurrent(this);
+                        setImage(this, tabName);
+                    });
                 });
-                $(".change-ethalon").click(function(){
-                    setCurrent(this);
-                    setImage("ethalon");
+
+                $.each([ "ethalon", "mask" ], function(_, buttonName){
+                     $(".button." + buttonName).click(function(){
+                        var action = buttonName;
+                        var ethalon = $(this).data("ethalon");
+                        var current = $(this).data("current");
+                        $.post({
+                            url: "http://localhost:3000",
+                            data: {
+                                action: action,
+                                ethalon: ethalon,
+                                current: current
+                            }
+                        });
+                    });
                 });
-                $(".change-diff").click(function(){
-                    setCurrent(this);
-                    setImage("diff");
-                });
+
             });
         </script>
     </body>
