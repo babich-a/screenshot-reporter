@@ -20,7 +20,13 @@ gulp.task('lint', function () {
         .pipe(eslint.failAfterError());
 });
 
-gulp.task('build', ['clean', 'lint'], function () {
+gulp.task('copy', function () {
+    return gulp
+        .src('src/**/*.html')
+        .pipe(gulp.dest('lib'));
+});
+
+gulp.task('build', [ 'clean', 'lint', 'copy' ], function () {
     return gulp
         .src('src/**/*.js')
         .pipe(babel())

@@ -46,7 +46,7 @@ export default function () {
             this.write(footer)
                 .newline();
 
-            var templateStr = fs.readFileSync(path.join(__dirname, '../src/index.html')).toString();
+            var templateStr = fs.readFileSync(path.join(__dirname, '../lib/index.html')).toString();
             var imagePath = 'img/';
             var result = [];
             var fixtureName = '';
