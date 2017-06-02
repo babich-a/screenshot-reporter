@@ -1,6 +1,6 @@
 {
   "name": "testcafe-reporter-screenshot-reporter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "screenshot-reporter TestCafe reporter plugin.",
   "repository": "https://github.com/babich-a/testcafe-reporter-screenshot-reporter",
   "author": {

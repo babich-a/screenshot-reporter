@@ -62,26 +62,7 @@
         </style>
     </head>
     <body>
-        <h1>{{fixture}}</h1>
-        {{#items}}
-        <div class="comparing-item">
-            <h2 class="screen-name {{failed}}">{{name}}</h2>
-            <div class="colapsible">
-                <div class="tabs">
-                    <div class="tab change-current active">current</div>
-                    <div class="tab change-etalon">etalon</div>
-                    <div class="tab change-diff">diff</div>
-
-                    <div class="button etalon" data-current="{{current}}" data-etalon="{{etalon}}">make etalon</div>
-                    <div class="button mask" data-current="{{current}}" data-etalon="{{etalon}}">create mask</div>
-                </div>
-
-                <img class="image" src="{{current}}" data-current="{{current}}" data-etalon="{{etalon}}" data-diff="{{diff}}">
-                <div class="display">{{current}}</div>
-            </div>
-            
-        </div>
-        {{/items}}
+        <h1>KitchenSink Form</h1>
         <script>
             $(function(){
 

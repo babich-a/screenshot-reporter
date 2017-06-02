@@ -64,31 +64,39 @@ export default function () {
                             })
                             .forEach(test => {
                                 var testDirectory = path.join(imagePath, fixture, test);
-                                var ethalonPath = path.join(testDirectory, 'ethalon/');
+                                var etalonPath = path.join(testDirectory, 'etalon/');
                                 var currentPath = path.join(testDirectory, 'current/');
 
-                                var currentFolders = fs.readdirSync(currentPath);
-                                var lastTestFolder = path.join(currentPath, currentFolders[currentFolders.length - 1]);//last dir in current
+                                if (fs.existsSync(currentPath)) {
+                                    var currentFolders = fs.readdirSync(currentPath);
+                                    var lastTestFolder = path.join(currentPath, currentFolders[currentFolders.length - 1]);//last dir in current
 
-                                fs.readdirSync(lastTestFolder)
-                                    .forEach(screenShotName => {
-                                        var img = path.join(lastTestFolder, screenShotName, 'chrome.png');
-                                        var diff = path.join(lastTestFolder, screenShotName, 'chrome_diff.png');
-                                        var ethImg = path.join(ethalonPath, screenShotName, 'chrome.png');
+                                    fs.readdirSync(lastTestFolder)
+                                        .forEach(screenShotName => {
+                                            var img = path.join(lastTestFolder, screenShotName, 'chrome.png');
+                                            var diff = path.join(lastTestFolder, screenShotName, 'chrome_diff.png');
+                                            var ethImg = path.join(etalonPath, screenShotName, 'chrome.png');
+                                            var failed = fs.existsSync(diff);
 
-                                        var forCase = {
-                                            current: img,
-                                            diff:    diff,
-                                            ethalon: ethImg
-                                        };
+                                            var forCase = {
+                                                current: img,
+                                                diff:    diff,
+                                                etalon:  ethImg,
+                                                failed:  failed ? 'failed' : '',
+                                                name:    screenShotName
+                                            };
 
-                                        result.push(forCase);
-                                    });
+                                            result.push(forCase);
+                                        });
+                                }
+
+                                
                             });
                     });
             }
 
             fs.writeFileSync('report.html', mustache.render(templateStr, { fixture: fixtureName, items: result }));
+            console.log('Report path: ' + path.resolve('report.html'));
         }
     };
 }
